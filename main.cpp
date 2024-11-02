@@ -22,21 +22,24 @@ class LinkedList
 
 		~LinkedList()
 		{
-			Node* current = _first->next;
-			
-			while (current != nullptr)
+			if (!IsEmpty()) 
 			{
-				delete _first;
-				_first = current;
-				current = current->next;
-			}
+				Node* current = _first->next;
+			
+				while (current != nullptr)
+				{
+					delete _first;
+					_first = current;
+					current = current->next;
+				}
 
-			delete _first;
-			_first = nullptr;
-			_last = nullptr;
+				delete _first;
+				_first = nullptr;
+				_last = nullptr;
+			}
 		}
 
-		LinkedList& Push(T value)
+		LinkedList& PushBack(T value)
 		{
 			Node* node = new Node(value);
 			
@@ -48,6 +51,57 @@ class LinkedList
 			}
 			_last->next = node;
 			_last = node;
+
+			return *this;
+		}
+
+		LinkedList& PushForward(T value)
+		{
+			Node* node = new Node(value);
+
+			if (IsEmpty())
+			{
+				_first = node;
+				_last = node;
+				return *this;
+			}
+
+			node->next = _first;
+			_first = node;
+
+			return *this;
+		}
+
+		LinkedList& DeleteBack()
+		{
+			if (IsEmpty())
+			{
+				return *this;
+			}
+
+			Node* current = _first;
+			while (current->next != _last)
+			{
+				current = current->next;
+			}
+
+			delete _last;
+			current->next = nullptr;
+			_last = current;
+
+			return *this;
+		}
+
+		LinkedList& DeleteForward()
+		{
+			if (IsEmpty())
+			{
+				return *this;
+			}
+
+			Node* current = _first;
+			_first = current->next;
+			delete current;
 
 			return *this;
 		}
@@ -70,13 +124,25 @@ class LinkedList
 
 			return out;
 		}
+
+		LinkedList& DeleteAll()
+		{
+			this->~LinkedList();
+
+			return *this;
+		}
 };
 
 int main()
 {
 	LinkedList<int> list;
-	list.Push(3);
-	list.Push(5);
+	list.PushBack(3);
+	list.DeleteAll();
+	list.PushForward(7);
+	list.PushBack(5);
+	list.PushBack(10);
+	list.DeleteBack();
+
 	cout << list;
 
 	return 0;
